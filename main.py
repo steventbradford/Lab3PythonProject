@@ -65,6 +65,14 @@ def createSubDirectories(directoryName:str, numberToCreate:int):
 #method 6: renameFiles
 #This method will rename all the files in the target directory with extension currentExt to extenstion newExt.
 #It will accept the parameters targetDirectory:str and currentExt:str and newExt:str
+def renameFiles(targetDirectory:str, currentExt:str, newExt:str):
+  for root, _, files in os.walk(targetDirectory):
+    for filename in files:
+      if filename.endswith(currentExt):
+        old_path = os.path.join(root, filename)
+        new_path = os.path.hoin(root, filename.replace(currentExt, newExt))
+        os.rename(old_path, new_path)
+        print(f"File '{filename} has been renamed to '{new_path'.")
 
 #method 7: displayContents
 #this method will display the list of files and directories of the directory. This should display the following table
@@ -72,6 +80,13 @@ def createSubDirectories(directoryName:str, numberToCreate:int):
 # -----                           --------
 #<Name of file or directory       <File or Directory>
 #It will accept the parameters directoryName:str
+def displayContents(directoryName:str):
+  print("Name".ljust(50), "Type")
+  print("-" * 50, "------")
+  for item in os.listdir(directoryName):
+    item_path = os.path.join(directoryName, item)
+    item_type = getType(item_path)
+    print(f"{item.ljust(50)} {item_type}")
 
 #main method
 #this method will accept no parameters and should implement the following task
