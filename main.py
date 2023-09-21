@@ -21,10 +21,21 @@ def createFiles(fileNamePrefix:str, numOfFiles:int):
 #method 2: getType
 #This method will return the string "File" if it fileOrDirectoryPath is a file and Directory otherwise
 #It will accept the parameters fileOrDirectoryPath:str
+def getType(fileOrDirectoryPath:str):
+  if os.path.isfile(fileOrDirectoryPath):
+    return "File"
+  elif os.path.isdir(fileOrDirectoryPath):
+    return "Directory"
+  else:
+    return "Does not exist"
 
 #method 3: renameFile
 #This method will rename a file to the new name
 #It will accept the parameters filename:str and newName:str
+def renameFile(filename:str, newName:str):
+  if os.path.exists(filename):
+    new_filename = os.path.join(os.path.dirname(filename), newName)
+    os.rename(filename, new_filename)
 
 #method 4: createDir
 #This method will create a directory if it does not already exist
