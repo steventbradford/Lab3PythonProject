@@ -43,6 +43,7 @@ def renameFile(filename:str, newName:str):
 #method 4: createDir
 #This method will create a directory if it does not already exist
 #It will accept the parameters nameOfDirectory:str
+def createDir(n
 
 #method 5: createSubDirecties
 #This method will create numberToCreate subdirectories of the directory directoryName
