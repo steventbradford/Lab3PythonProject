@@ -48,6 +48,8 @@ def createFiles(fileNamePrefix:str, numOfFiles:int):
 #main method
 #this method will accept no parameters and should implement the following task
 def main():
+  username = os.getLogin()
+  os.chdir("//home//" + username)
   current_directory = os.getcwd()
   print(current_directory)
 
