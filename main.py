@@ -36,7 +36,7 @@ def renameFile(filename:str, newName:str):
   if os.path.exists(filename):
     new_filename = os.path.join(os.path.dirname(filename), newName)
     os.rename(filename, new_filename)
-    print(f"File '{filename}' has been renamed to '{newName'.")
+    print(f"File '{filename}' has been renamed to '{newName}'.")
   else:
     print(f"File '{filename}' does not exist.")
 
@@ -70,9 +70,9 @@ def renameFiles(targetDirectory:str, currentExt:str, newExt:str):
     for filename in files:
       if filename.endswith(currentExt):
         old_path = os.path.join(root, filename)
-        new_path = os.path.hoin(root, filename.replace(currentExt, newExt))
+        new_path = os.path.join(root, filename.replace(currentExt, newExt))
         os.rename(old_path, new_path)
-        print(f"File '{filename} has been renamed to '{new_path'.")
+        print(f"File '{filename} has been renamed to '{new_path}'.")
 
 #method 7: displayContents
 #this method will display the list of files and directories of the directory. This should display the following table
