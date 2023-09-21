@@ -1,6 +1,8 @@
 #Lab 3 Python project 
 #Steven Bradford and Asher Applegate
 
+import os
+
 #methods
 
 #method 1: createFiles
@@ -36,7 +38,9 @@
 
 #main method
 #this method will accept no parameters and should implement the following task
-
+def main():
+  current_directory = os.getcwd()
+  print(current_directory)
 
 
 
