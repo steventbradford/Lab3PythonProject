@@ -43,7 +43,12 @@ def renameFile(filename:str, newName:str):
 #method 4: createDir
 #This method will create a directory if it does not already exist
 #It will accept the parameters nameOfDirectory:str
-def createDir(n
+def createDir(nameOfDirectory:str):
+  if not os.path.exists(nameOfDirectory):
+    os.mkdir(nameOfDirectory)
+    print(f"Directory '{nameOfDirectory}' has been created.")
+  else:
+    print (f"Directory '{nameOfDirectory}' already exists.")
 
 #method 5: createSubDirecties
 #This method will create numberToCreate subdirectories of the directory directoryName
