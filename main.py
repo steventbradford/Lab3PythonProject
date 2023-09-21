@@ -63,11 +63,16 @@ def createDir(n
 #main method
 #this method will accept no parameters and should implement the following task
 def main():
+  #Under your home directory, print the name of your current directory to the console
   username = os.getLogin()
   os.chdir("//home//" + username)
   current_directory = os.getcwd()
   print(current_directory)
 
+  #Under the home directory of the current user, create a directory labeled
+  #CITFall2023<username> where <username> is the username of the current Linux user.
+  os.mkdir("CITFALL2023"+username)
+  os.chdir("//home//"+username+("//CITFALL2023"+username+"//")
 
 
 
