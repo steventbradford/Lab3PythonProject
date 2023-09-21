@@ -36,6 +36,9 @@ def renameFile(filename:str, newName:str):
   if os.path.exists(filename):
     new_filename = os.path.join(os.path.dirname(filename), newName)
     os.rename(filename, new_filename)
+    print(f"File '{filename}' has been renamed to '{newName'.")
+  else:
+    print(f"File '{filename}' does not exist.")
 
 #method 4: createDir
 #This method will create a directory if it does not already exist
