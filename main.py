@@ -53,6 +53,14 @@ def createDir(nameOfDirectory:str):
 #method 5: createSubDirecties
 #This method will create numberToCreate subdirectories of the directory directoryName
 #It will accept the parameters directoryName:str and numberToCreate:int
+def createSubDirectories(directoryName:str, numberToCreate:int):
+  for i in range(1, numberToCreate +1):
+    subdirectory = os.path.join(directoryName, f"subdir{i}")
+    if not os.path.exists(subdirectory):
+      os.mkdir(subdirectory)
+      print(f"Subdirectory '{subdirectory}' has been created.")
+    else:
+      print(f"Subdirectory '{subdirectory}' already exists.")
 
 #method 6: renameFiles
 #This method will rename all the files in the target directory with extension currentExt to extenstion newExt.
