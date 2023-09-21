@@ -12,6 +12,11 @@ def createFiles(fileNamePrefix:str, numOfFiles:int):
   for i in range (1, numOfFiles +1):
     filename = f"{fileNamePrefix}_{i}.txt"
     if not os.path.exists(filename):
+      with open(filename, 'w') as file:
+        file.write('')
+      print(f"File '{filename}' has been created.")
+    else:
+      print(f"File '{filename}' already exists.")
 
 #method 2: getType
 #This method will return the string "File" if it fileOrDirectoryPath is a file and Directory otherwise
