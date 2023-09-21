@@ -8,6 +8,10 @@ import os
 #method 1: createFiles
 #This method will create a number of files if they do not exist
 #It will accept the parameters fileNamePrefix:str and numOfFiles:int
+def createFiles(fileNamePrefix:str, numOfFiles:int):
+  for i in range (1, numOfFiles +1):
+    filename = f"{fileNamePrefix}_{i}.txt"
+    if not os.path.exists(filename):
 
 #method 2: getType
 #This method will return the string "File" if it fileOrDirectoryPath is a file and Directory otherwise
