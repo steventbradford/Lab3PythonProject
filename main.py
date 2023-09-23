@@ -91,17 +91,50 @@ def displayContents(directoryName:str):
 #main method
 #this method will accept no parameters and should implement the following task
 def main():
-  #Under your home directory, print the name of your current directory to the console
-  username = os.getLogin()
-  os.chdir("//home//" + username)
-  current_directory = os.getcwd()
-  print(current_directory)
+      # a. Print the name of the current directory
+    current_directory = os.getcwd()
+    print(f"Current Directory: {current_directory}")
 
-  #Under the home directory of the current user, create a directory labeled
-  #CITFall2023<username> where <username> is the username of the current Linux user.
-  os.mkdir("CITFALL2023"+username)
-  os.chdir("//home//"+username+("//CITFALL2023"+username+"//")
+    # b. Create a directory under the home directory of the current user
+    username = os.getlogin()
+    user_directory = os.path.expanduser("~")
+    cit_directory = os.path.join(user_directory, f"CITFall2023{username}")
+    createDir(cit_directory)
+    print(f"Created directory: {cit_directory}")
 
+    # c. Print the name of the current directory
+    print(f"Current Directory: {current_directory}")
 
+    # d. Prompt the user for the number of files and their extension
+    num_files = int(input("Enter the number of files to create: "))
+    ext = input("Enter the file extension (txt, png, doc, dat): ")
+    while ext not in ["txt", "png", "doc", "dat"]:
+        ext = input("Invalid extension. Please enter a valid extension: ")
 
+    createFiles(os.path.join(cit_directory, "file"), num_files)
+    print(f"Created {num_files} files with extension {ext} in {cit_directory}")
 
+    # e. Prompt the user for the number of subdirectories to create
+    num_subdirs = int(input("Enter the number of subdirectories to create: "))
+    while num_subdirs <= 0:
+        num_subdirs = int(input("Invalid input. Please enter a positive number of subdirectories: "))
+
+    createSubDirectories(cit_directory, num_subdirs)
+    print(f"Created {num_subdirs} subdirectories in {cit_directory}")
+
+    # f. Display the contents of the current directory
+    displayContents(current_directory)
+
+    # g. Prompt the user for a new extension for the files and rename them
+    new_ext = input("Enter the new file extension (txt, png, doc, dat): ")
+    while new_ext not in ["txt", "png", "doc", "dat"]:
+        new_ext = input("Invalid extension. Please enter a valid extension: ")
+
+    renameFiles(cit_directory, ext, new_ext)
+    print(f"Renamed files with extension {ext} to {new_ext} in {cit_directory}")
+
+    # h. Display the contents of the current directory again
+    displayContents(current_directory)
+  
+if __name__ == "__main__":
+    main()
