@@ -110,12 +110,14 @@ def main():
     user_directory = os.path.expanduser("~")
     cit_directory = os.path.join(user_directory, f"CITFall2023{username}")
     createDir(cit_directory)
+
+    # This was not in the instructions, but had to be added in order for it to work as intended
     os.chdir(cit_directory)
+    current_directory = os.getcwd()
     print(f"Changed Current Directory to: {cit_directory}")
-    current_directory_cit = os.getcwd()
 
     # c. Print the name of the current directory
-    print(f"Current Directory: {current_directory_cit}")
+    print(f"Current Directory: {current_directory}")
 
     # d. Prompt the user for the number of files and their extension
     while True:
@@ -145,7 +147,7 @@ def main():
     print(f"Created {num_subdirs} subdirectories in {cit_directory}")
 
     # f. Display the contents of the current directory
-    displayContents(current_directory_cit)
+    displayContents(current_directory)
 
     # g. Prompt the user for a new extension for the files and rename them
     new_extension = input("Enter a new extension for the files (txt, png, doc, or dat): ")
@@ -157,7 +159,7 @@ def main():
     renameFiles(target_directory, current_extension, new_extension)
 
     # h. Display the contents of the current directory again
-    displayContents(current_directory_cit)
+    displayContents(current_directory)
   
 if __name__ == "__main__":
     main()
