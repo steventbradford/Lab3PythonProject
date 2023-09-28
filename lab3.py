@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Lab 3 Python Project 
 # Steven Bradford and Asher Applegate
 
