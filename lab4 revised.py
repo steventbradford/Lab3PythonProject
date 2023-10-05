@@ -1,6 +1,6 @@
 import csv
 
-# Function to read data from the given CVS file and return a list of records
+# Function to read data from the given CVS file
 def read_employee_data(file_path):
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
@@ -22,7 +22,7 @@ def create_suspicious_login_file(records, user_id):
             login_count_excess = total_logins - 200
             suspicious_employees.append([f"{first_name} {last_name}", first_ip_address, total_logins, login_count_excess])
 
-    # Function to create a new CSV file with suspicious employee login information
+    # Create a new CSV file with suspicious employee login information
     output_file_path = f"{user_id}.csv"
     with open(output_file_path, 'w', newline='') as file:
         writer = csv.writer(file)
@@ -31,7 +31,7 @@ def create_suspicious_login_file(records, user_id):
     
     return output_file_path, suspicious_employees
 
-# Function to print suspicious employee information and total number of suspicious employees
+# Function to print suspicious employee information in a table and total number of suspicious employees
 def print_suspicious_employees_info(suspicious_employees):
     print("\nSuspicious Employee Login Attempts:")
     print("{:<20} {:<20} {:<15} {:<15}".format('Name', 'First IP Address', 'Login Count', 'Excess Count'))
