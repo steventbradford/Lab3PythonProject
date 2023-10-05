@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+# Lab 4 Python Project 
+# Steven Bradford and Asher Applegate
+
 import csv
 
 # Function to read data from the given CVS file
