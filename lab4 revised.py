@@ -19,7 +19,7 @@ def create_suspicious_login_file(records, user_id):
         if total_logins >= 200 or ('e' in last_name.lower() or 'i' in last_name.lower()):
             ip_list = ip_addresses.split(',')
             first_ip_address = ip_list[0].strip()
-            login_count_excess = max(0, login_count - 200)
+            login_count_excess = max(0, total_logins - 200)
             suspicious_employees.append([f"{first_name} {last_name}", first_ip_address, total_logins, login_count_excess])
 
     # Create a new CSV file with suspicious employee login information
