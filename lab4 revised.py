@@ -16,7 +16,7 @@ def create_suspicious_login_file(records, user_id):
     for record in records:
         first_name, last_name, _, total_logins, ip_addresses = record
         total_logins = int(total_logins)
-        if total_logins >= 200 and ('e' in last_name.lower() or 'i' in last_name.lower()):
+        if total_logins >= 200 or ('e' in last_name.lower() or 'i' in last_name.lower()):
             ip_list = ip_addresses.split(',')
             first_ip_address = ip_list[0].strip()
             login_count_excess = total_logins - 200
