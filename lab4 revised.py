@@ -1,52 +1,62 @@
 import csv
 
-# Function to read data from the given CSV file
+# Function to read data from the given file and return a list of records
 def read_employee_data(file_path):
-    employee_data = []
     with open(file_path, 'r') as file:
-        csv_reader = csv.reader(file)
-        header = next(csv_reader)  # Skip the header row
-        for row in csv_reader:
-            employee_data.append(row)
-    return employee_data
+        reader = csv.reader(file)
+        headers = next(reader)  # Skip header row
+        records = []
+        for row in reader:
+            records.append(row)
+    return records
 
-# Function to determine employees with suspicious login attempts
-def find_suspicious_employees(employee_data):
+# Function to identify suspicious login attempts and create a new file with relevant information
+def create_suspicious_login_file(records, user_id):
     suspicious_employees = []
-    for employee in employee_data:
-        name = f"{employee[1]} {employee[2]}"  # First and Last Names
-        login_count = int(employee[3])
-        if 'e' in name.lower() or 'i' in name.lower() or login_count >= 200:
-            login_count_excess = max(0, login_count - 200)
-            first_ip = employee[4].split(',')[0] if employee[4] else "N/A"
-            suspicious_employees.append([name, first_ip, login_count, login_count_excess])
-    return suspicious_employees
+    for record in records:
+        first_name, last_name, _, total_logins, ip_addresses = record
+        total_logins = int(total_logins)
+        if total_logins >= 200 and ('e' in last_name.lower() or 'i' in last_name.lower()):
+            ip_list = ip_addresses.split(',')
+            first_ip_address = ip_list[0].strip()
+            login_count_excess = total_logins - 200
+            suspicious_employees.append([f"{first_name} {last_name}", first_ip_address, total_logins, login_count_excess])
 
-# Function to create a new CSV file with suspicious employee login information
-def create_suspicious_employee_file(file_name, suspicious_employees):
-    with open(file_name, 'w', newline='') as file:
-        csv_writer = csv.writer(file)
-        csv_writer.writerow(['name', 'first IP address', 'login_count', 'login_count_excess'])
-        csv_writer.writerows(suspicious_employees)
+    # Create a new CSV file with suspicious employee information
+    output_file_path = f"{user_id}.csv"
+    with open(output_file_path, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['name', 'first IP address', 'login_count', 'login_count_excess'])
+        writer.writerows(suspicious_employees)
+    
+    return output_file_path, suspicious_employees
 
-# Main function to call other functions
-def main():
-    file_path = 'employee_logins.csv'
-    employee_data = read_employee_data(file_path)
-    suspicious_employees = find_suspicious_employees(employee_data)
-
-    # Generate a file name based on your NKU user ID
-    your_nku_user_id = 'bradfords3'
-    output_file_name = f'{your_nku_user_id}.csv'
-
-    create_suspicious_employee_file(output_file_name, suspicious_employees)
-
-    # Print suspicious employee data in a table
-    print("{:<30} {:<20} {:<15} {:<20}".format("Name", "First IP Address", "Login Count", "Login Count Excess"))
+# Function to print suspicious employee information and total number of suspicious employees
+def print_suspicious_employees_info(suspicious_employees):
+    print("\nSuspicious Employee Login Attempts:")
+    print("{:<20} {:<20} {:<15} {:<15}".format('Name', 'First IP Address', 'Login Count', 'Excess Count'))
+    print("-" * 70)
     for employee in suspicious_employees:
-        print("{:<30} {:<20} {:<15} {:<20}".format(*employee))
+        print("{:<20} {:<20} {:<15} {:<15}".format(employee[0], employee[1], employee[2], employee[3]))
+    print("-" * 70)
+    print(f"Total employees with suspicious login attempts: {len(suspicious_employees)}\n")
 
-    print(f"Total employees with suspicious login attempts: {len(suspicious_employees)}")
+# Main function that calls other functions
+def main():
+    file_path = "employee_logins.csv"
+    user_id = "applegatea4"
+    
+    # Read data from the file
+    records = read_employee_data(file_path)
+    
+    # Identify suspicious login attempts and create a new file
+    output_file, suspicious_employees = create_suspicious_login_file(records, user_id)
+    
+    # Print suspicious employee information
+    print_suspicious_employees_info(suspicious_employees)
+    
+    print(f"New file '{output_file}' created with suspicious employee login information.")
 
+# Call the main function to execute the script
 if __name__ == "__main__":
     main()
