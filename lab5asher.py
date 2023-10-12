@@ -18,9 +18,6 @@ def backup_directory(source_dir, destination_dir):
         shutil.copy2(source_file, destination_file)
     print("Backup completed successfully.")
 
-# Example Usage
-# backup_directory('source_directory', 'backup_directory')
-
 # Task 2
 def create_archive(directory_name, archive_type):
     desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
@@ -36,13 +33,6 @@ def create_archive(directory_name, archive_type):
     
     shutil.make_archive(os.path.join(desktop_path, directory_name), archive_type, desktop_path, directory_name)
     print(f"Archive '{directory_name}.{archive_type}' created successfully.")
-
-# Example Usage
-# create_archive('example_directory', 'zip')
-
-
-# Example Usage
-# create_archive('example_directory', 'zip')
 
 # Task 3
 def display_large_files(zip_file_path, threshold_kb):
