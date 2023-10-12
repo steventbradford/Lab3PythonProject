@@ -6,23 +6,26 @@ import platform
 import datetime
 
 def backup_directory(source_dir, dest_dir):
-    try:
-        if not os.path.exists(source_dir):
-            print(f"Source directory '{source_dir}' does not exist.")
-            return
-        if not os.path.exists(dest_dir):
-            print(f"Creating destination directory '{dest_dir}'...")
-            os.makedirs(dest_dir)
-
-        for filename in os.listdir(source_dir):
-            source_path = os.path.join(source_dir, filename)
-            dest_path = os.path.join(dest_dir, filename)
-            shutil.copy2(source_path, dest_path)
-
-        print("Backup completed successfully.")
-
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
+    # Check if source directory exists
+    if not os.path.exists(source_dir):
+        print(f"Source directory '{source_dir}' does not exist.")
+        return
+    
+    # Check if destination directory exists, create if not
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+    
+    # List all files in the source directory
+    files = os.listdir(source_dir)
+    
+    # Copy each file from source to destination
+    for file in files:
+        source_path = os.path.join(source_dir, file)
+        dest_path = os.path.join(dest_dir, file)
+        
+        # Copy the file
+        shutil.copy2(source_path, dest_path)
+        print(f"Backed up: {source_path} to {dest_path}")
 
 def create_archive(directory_name, archive_type):
     valid_archive_types = ["zip", "gztar", "tar", "bztar", "xztar"]
