@@ -47,18 +47,16 @@ def create_archive(directory_name, archive_type):
 
 def check_large_files(zip_file, threshold_kb):
     try:
-        with zipfile.ZipFile(zip_file, "r") as archive:
-            file_list = archive.namelist()
-            os_info = archive.comment.decode('utf-8')
+        zp = zipfile.ZipFile(zip_file)
+        size = [[zinfo.filename , zinfo.file_size] for zinfo in zp.filelist ]
+        zip_kb = [[name,float(byte_size) / 1000] for name,byte_size in size if (float(byte_size) / 1000)>threshold_kb] # kB
 
-            print(f"Operating System: {os_info}")
-            print("Large Files:")
+        for name,size in zip_kb:
+            print(name,size)
 
-            for file_name in file_list:
-                file_info = archive.getinfo(file_name)
-                size_kb = file_info.file_size / 1024
-                if size_kb > threshold_kb:
-                    print(f"{file_name}: {size_kb:.2f} KB")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
