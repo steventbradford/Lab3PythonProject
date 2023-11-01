@@ -2,8 +2,8 @@
 # Group 17
 # Asher Applegate and Steven Bradford
 
-# Example command: python lab7.py -i output.log -d path/to/directory
-# Example command: python lab7.py -h
+# Example command: python group17_lab7.py -i output.log -d path/to/directory
+# Example command: python group17_lab7.py -h
 
 import os
 import argparse
@@ -26,7 +26,7 @@ def list_directory_contents(directory, log_file=None, list_directories=False):
     if list_directories:
         entries = [entry for entry in entries if os.path.isdir(os.path.join(directory, entry))]
     
-    # Output the directory contents to console or log file
+    # Output the directory contents to console / log file
     if log_file:
         with open(log_file, 'w') as log:
             log.write(f"File/Dir #\t\tName\n")
