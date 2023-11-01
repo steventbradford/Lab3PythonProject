@@ -10,18 +10,23 @@ import argparse
 
 def list_directory_contents(directory, log_file=None, list_directories=False):
     try:
+        # Get a list of entries in the specified directory
         entries = os.listdir(directory)
     except FileNotFoundError:
+        # Return an error if the directory is not found
         print(f"Error: Directory '{directory}' not found.")
         if log_file:
             with open(log_file, 'a') as log:
                 log.write(f"Error: Directory '{directory}' not found.\n")
         return
     
+    # Exclude symbolic entries '.' and '..'
     entries = [entry for entry in entries if entry not in ['.', '..']]
+    # List only directories
     if list_directories:
         entries = [entry for entry in entries if os.path.isdir(os.path.join(directory, entry))]
     
+    # Output the directory contents to console or log file
     if log_file:
         with open(log_file, 'w') as log:
             log.write(f"File/Dir #\t\tName\n")
@@ -36,6 +41,7 @@ def list_directory_contents(directory, log_file=None, list_directories=False):
             print(f"{idx}\t\t\t{entry}")
 
 def main():
+    # Argument parser
     parser = argparse.ArgumentParser(description="List contents of a directory.")
     parser.add_argument('directory', metavar='DIR_PATH', type=str, help='Path of the directory to be listed')
     parser.add_argument('-i', '--logfile', metavar='LOG_FILE', type=str, help='Output to log file')
@@ -43,9 +49,12 @@ def main():
     args = parser.parse_args()
 
     try:
+        # Call the function to list directory contents based on provided arguments
         list_directory_contents(args.directory, args.logfile, args.dir)
     except Exception as e:
+        # Error handling
         print(f"Error: {e}")
 
+# Main
 if __name__ == "__main__":
     main()
