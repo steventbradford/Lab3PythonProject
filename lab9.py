@@ -48,12 +48,15 @@ def exec_command(ftp, file_type):
 
 # Main function
 def main():
-    # Get the FTP server IP address from the user
+    # Get the FTP server IP address and port from the user
     ftp_server_ip = input("Enter FTP server IP: ")
-    ftp = FTP(ftp_server_ip)
+    ftp_server_port = int(input("Enter FTP server port (default is 21): ") or 21)
 
-    # Log in to the FTP server (assuming username and password are the same for simplicity)
-    ftp.login("student", "password")
+    try:
+        # Attempt to establish an FTP connection
+        ftp = FTP()
+        ftp.connect(ftp_server_ip, ftp_server_port)
+        ftp.login("student", "password")
 
     # Prompt the user to select an option
     choice = input("Select an option:\n1. Upload\n2. Download\n3. List files\nEnter the number corresponding to your choice: ")
@@ -76,7 +79,10 @@ def main():
 
     # Close the FTP connection
     ftp.quit()
+        except socket.error as e:
+            print(f"Socket error: {e}")
+        except Exception as e:
+            print(f"Error: {e}")
 
-# Run the main function if the script is executed
 if __name__ == "__main__":
     main()
