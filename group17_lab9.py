@@ -1,7 +1,11 @@
+#!bin/bash/python3
+# Group 17
+# Lab 9
+# Asher Applegate and Steven Bradford
+
 import socket
 from ftplib import FTP
 import os
-
 
 # Function to upload a file to VM2
 def upload_file(ftp, filename):
@@ -14,7 +18,6 @@ def upload_file(ftp, filename):
         print(f"Error: {filename} not found.")
     except Exception as e:
         print(f"Error uploading file: {e}")
-
 
 # Function to download files with a specific extension from VM2
 def download_files(ftp, file_extension):
@@ -35,7 +38,6 @@ def download_files(ftp, file_extension):
     except Exception as e:
         print(f"Error downloading files: {e}")
 
-
 # Function to execute the "ls" command on VM2 and list files of a certain type
 def exec_command(ftp, file_type):
     try:
@@ -53,7 +55,6 @@ def exec_command(ftp, file_type):
         print(f"Files with {file_type} extension:\n{formatted_data}")
     except Exception as e:
         print(f"Error executing command: {e}")
-
 
 # Main function
 def main():
@@ -93,7 +94,6 @@ def main():
         print(f"Socket error: {e}")
     except Exception as e:
         print(f"Error: {e}")
-
 
 # Run the main function if the script is executed
 if __name__ == "__main__":
