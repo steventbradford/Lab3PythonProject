@@ -2,6 +2,7 @@ import socket
 from ftplib import FTP
 import os
 
+
 # Function to upload a file to VM2
 def upload_file(ftp, filename):
     try:
@@ -14,12 +15,13 @@ def upload_file(ftp, filename):
     except Exception as e:
         print(f"Error uploading file: {e}")
 
+
 # Function to download files with a specific extension from VM2
 def download_files(ftp, file_extension):
     try:
         # Get a list of files with the specified extension on VM2
         files = ftp.nlst(f'cit383F2023/*.{file_extension}')
-        
+
         # Check if any files were found
         if not files:
             print(f"No files with {file_extension} extension found on VM2.")
@@ -33,13 +35,14 @@ def download_files(ftp, file_extension):
     except Exception as e:
         print(f"Error downloading files: {e}")
 
+
 # Function to execute the "ls" command on VM2 and list files of a certain type
 def exec_command(ftp, file_type):
     try:
         data = []
         # Get a directory listing of files with the specified type on VM2
         ftp.dir(f'cit383F2023/*.{file_type}', lambda x: data.append(x))
-        
+
         # Check if any files were found
         if not data:
             print(f"No files with {file_type} extension found on VM2.")
@@ -51,6 +54,7 @@ def exec_command(ftp, file_type):
     except Exception as e:
         print(f"Error executing command: {e}")
 
+
 # Main function
 def main():
     try:
@@ -61,10 +65,11 @@ def main():
         # Attempt to establish an FTP connection
         ftp = FTP()
         ftp.connect(ftp_server_ip, ftp_server_port)
-        ftp.login("student", "password")
+        ftp.login("student", "student")
 
         # Prompt the user to select an option
-        choice = input("Select an option:\n1. Upload\n2. Download\n3. List files\nEnter the number corresponding to your choice: ")
+        choice = input(
+            "Select an option:\n1. Upload\n2. Download\n3. List files\nEnter the number corresponding to your choice: ")
 
         if choice == '1':
             # If the user chose to upload, get the filename and call the upload function
@@ -88,6 +93,7 @@ def main():
         print(f"Socket error: {e}")
     except Exception as e:
         print(f"Error: {e}")
+
 
 # Run the main function if the script is executed
 if __name__ == "__main__":
