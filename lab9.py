@@ -1,6 +1,7 @@
 # Import necessary modules
 import socket
 from ftplib import FTP
+import httplib
 import os
 
 # Function to upload a file to VM2
