@@ -71,7 +71,7 @@ def main():
         display_files(files)
 
     # Send email to the CTO
-    send_email(args.email, "CTOCIT383@gmail.com", "CTOCIT383", files, args.USERNAME)
+    send_email(args.email, "CTOCIT383@gmail.com", "CTOCIT#*#", files, args.USERNAME)
 
     # Establish an SSH connection for file download
     with paramiko.SSHClient() as ssh:
