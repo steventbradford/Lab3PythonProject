@@ -2,9 +2,9 @@
 # Group 17
 # Asher Applegate and Steven Bradford
 
-# This script is used to monitor files that may have been impacted by malicious attacks. 
-# It uses the IP address of a target (compromised) computer and the username / password for an account on the target computer to identify all the files in the home directory of the user which were created in the last month but modified in the past one week. 
-# The script will display the names of the affected files and their last modified dates. 
+# This script is used to monitor files that may have been impacted by malicious attacks.
+# It uses the IP address of a target (compromised) computer and the username / password for an account on the target computer to identify all the files in the home directory of the user which were created in the last month but modified in the past one week.
+# The script will display the names of the affected files, their last modified dates, and sizes.
 # Thereafter, the script will send an email to the Chief Technology Officer (CTO) listing the files that have been attacked and list the display name of the user whose files were impacted by the attack.
 
 # Example command: python ./final_proj_17_part1.py 10.2.57.32 student -e applegatea4@hh.nku.edu
@@ -13,6 +13,7 @@ import os
 import paramiko
 import smtplib
 import argparse
+import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
@@ -38,19 +39,12 @@ def find_affected_files(ssh_client):
     return files_list
 
 def display_files(ssh_client, files_list):
-    # Method to display the contents and last modified date of affected files
+    # Method to display the contents of affected files if the option is specified
     for file_path in files_list:
         print(f"Displaying contents of: {file_path}")
         stdin, stdout, stderr = ssh_client.exec_command(f"cat {file_path}")
-        file_contents = stdout.read().decode()
+        print(stdout.read().decode())
 
-        # Get last modified date of the file
-        stdin, stdout, stderr = ssh_client.exec_command(f"stat -c %y {file_path}")
-        last_modified_date = stdout.read().decode().strip()
-
-        # Display file contents and last modified date
-        print(f"Last Modified Date: {last_modified_date}")
-        print(file_contents)
 
 def send_email(sender_email, sender_password, recipient_email, files_list, affected_user):
     # Method to send an email with a list of affected files to the CTO
@@ -63,6 +57,13 @@ def send_email(sender_email, sender_password, recipient_email, files_list, affec
     if not valid_files:
         print("No valid files found.")
         return
+
+    for file_path in valid_files:
+        file_size = os.path.getsize(file_path)
+        last_modified = os.path.getmtime(file_path)
+        last_modified_date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(last_modified))
+
+        body += f"File: {os.path.basename(file_path)}\nSize: {file_size} bytes\nLast Modified: {last_modified_date}\n\n"
 
     # Attach the smallest affected file
     smallest_file = min(valid_files, key=lambda x: os.path.getsize(x) if os.path.exists(x) else float('inf'))
@@ -85,7 +86,8 @@ def send_email(sender_email, sender_password, recipient_email, files_list, affec
         server.login(sender_email, "jyxm qmge irun rxpa")
         server.sendmail(sender_email, recipient_email, msg.as_string())
 
-    print(f"Email sent to {recipient_email} with the smallest affected file attached: {smallest_file} (Size: {file_size} bytes)")
+    print(
+        f"Email sent to {recipient_email} with the smallest affected file attached: {smallest_file} (Size: {file_size} bytes | Last Modified: {last_modified_date})")
 
 def download_file(ssh_client, file_path, download_path):
     # Method to download the smallest affected file to the specified download path
