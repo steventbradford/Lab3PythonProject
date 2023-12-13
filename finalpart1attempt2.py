@@ -26,7 +26,7 @@ def find_affected_files(ssh_client):
     files_list = stdout.read().decode().splitlines()
     return files_list
 
-def display_files(files_list):
+def display_files(ssh_client, files_list):
     # Method to display the contents of affected files if the option is specified
     for file_path in files_list:
         print(f"Displaying contents of: {file_path}")
@@ -75,7 +75,7 @@ def parse_arguments():
     parser.add_argument("-d", "--disp", action="store_true", help="Display the contents of affected files.")
     parser.add_argument("-e", "--email", dest="RECPT_EMAIL", required=True, help="Email address of the CTO.")
     parser.add_argument("-p", "--path", dest="DOWNLOAD_PATH", help="Download affected files to this path.")
-    parser.add_argument("-H", "--help", action="help", help="Show this help message and exit.")
+    parser.add_argument("-H", "--Help", action="help", help="Show this help message and exit.")
 
     return parser.parse_args()
 
@@ -94,10 +94,10 @@ def main():
 
     # Display files if option is specified
     if args.disp:
-        display_files(files_list)
+        display_files(ssh_client, files_list)
 
     # Send email to CTO
-    send_email("CTOCIT383@gmail.com", "CTOCIT383", args.RECPT_EMAIL, files_list, args.USERNAME)
+    send_email("CTOCIT383@gmail.com", "CTOCIT#*#", args.RECPT_EMAIL, files_list, args.USERNAME)
 
     # Download the smallest affected file
     download_path = args.DOWNLOAD_PATH if args.DOWNLOAD_PATH else os.path.expanduser("~")
