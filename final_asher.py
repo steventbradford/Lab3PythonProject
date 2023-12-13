@@ -39,9 +39,8 @@ def display_files(files):
             print(f"Content of {file_path}:\n{content}\n{'=' * 40}")
 
 def send_email(recipient_email, sender_email, sender_password, files, affected_user):
-    # Set up the email server
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
+    # Set up the email server with SSL
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
 
     # Log in to the sender's email account
     server.login(sender_email, sender_password)
@@ -84,7 +83,7 @@ def main():
     parser.add_argument("-d", "--disp", action="store_true", help="Display the contents of affected files")
     parser.add_argument("-e", "--email", required=True, help="Email address of the CTO")
     parser.add_argument("-p", "--path", help="Download path for affected files")
-    parser.add_argument("-h", "--help", action="store_true", help="Show help message")
+    parser.add_argument("-H", "--help", action="store_true", help="Show help message")
 
     # Parse command-line arguments
     args = parser.parse_args()
@@ -104,7 +103,7 @@ def main():
         display_files(files)
 
     # Send email to the CTO
-    send_email(args.email, "CTOCIT383@gmail.com", "CTOCIT#*#", files, args.USERNAME)
+    send_email(args.email, "CTOCIT383@gmail.com", "YourAppPassword", files, args.USERNAME)
 
     # Establish an SSH connection for file download
     with paramiko.SSHClient() as ssh:
