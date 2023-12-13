@@ -1,3 +1,14 @@
+#!/usr/bin/python
+# Group 17
+# Asher Applegate and Steven Bradford
+
+# This script is used to monitor files that may have been impacted by malicious attacks. 
+# It uses the IP address of a target (compromised) computer and the username / password for an account on the target computer to identify all the files in the home directory of the user which were created in the last month but modified in the past one week. 
+# The script will display the names of the affected files and their last modified dates. 
+# Thereafter, the script will send an email to the Chief Technology Officer (CTO) listing the files that have been attacked and list the display name of the user whose files were impacted by the attack.
+
+# Example command: python ./final_proj_17_part1.py 10.2.57.32 student -e applegatea4@hh.nku.edu
+
 import os
 import paramiko
 import smtplib
@@ -27,11 +38,19 @@ def find_affected_files(ssh_client):
     return files_list
 
 def display_files(ssh_client, files_list):
-    # Method to display the contents of affected files if the option is specified
+    # Method to display the contents and last modified date of affected files
     for file_path in files_list:
         print(f"Displaying contents of: {file_path}")
         stdin, stdout, stderr = ssh_client.exec_command(f"cat {file_path}")
-        print(stdout.read().decode())
+        file_contents = stdout.read().decode()
+
+        # Get last modified date of the file
+        stdin, stdout, stderr = ssh_client.exec_command(f"stat -c %y {file_path}")
+        last_modified_date = stdout.read().decode().strip()
+
+        # Display file contents and last modified date
+        print(f"Last Modified Date: {last_modified_date}")
+        print(file_contents)
 
 def send_email(sender_email, sender_password, recipient_email, files_list, affected_user):
     # Method to send an email with a list of affected files to the CTO
