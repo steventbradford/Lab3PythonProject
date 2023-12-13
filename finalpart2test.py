@@ -1,19 +1,15 @@
-#!/usr/bin/python
-# Group 17
-# Asher Applegate and Steven Bradford
-
-# This script creates users and groups based on the names of the employees and the groups in the defined file. 
-# The usernames will be created based off the syntax “[last name][first letter of first name][N]” with N being either blank or a value, starting with 1 and increasing by 1 for each duplicate username, depending on if a user with that username already exists.  
-# The users will be added to the corresponding groups as is defined in the employee file. 
-# The First Name, Last Name, Username, and Password generated will be written to the CSV file that is defined. 
-
-# Example command: python ./final_proj_17_part2.py /home/student/employee-f23.csv /home/student/useraccounts.csv
-
 import csv
 import subprocess
 import os
 import argparse
 import time
+import secrets
+import string
+
+def generate_random_password(length=12):
+    # Generate a random password
+    characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(secrets.choice(characters) for _ in range(length))
 
 def create_group(group):
     # Check if the group already exists
@@ -28,10 +24,10 @@ def create_group(group):
         except subprocess.CalledProcessError as e:
             print(f"Error creating group {group}: {e}")
 
-def create_user_account(username, full_name, group):
-    # Create a user account using the Linux useradd command
+def create_user_account(username, full_name, group, password):
+    # Create a user account using the Linux useradd command with a specified password
     try:
-        subprocess.run(["sudo", "useradd", "-m", "-c", full_name, "-G", group, username])
+        subprocess.run(["sudo", "useradd", "-m", "-c", full_name, "-G", group, "-p", password, username])
         print(f"User account created: {username}")
     except subprocess.CalledProcessError as e:
         print(f"Error creating user account for {username}: {e}")
@@ -81,17 +77,19 @@ def process_employee_file(employee_file_path, output_file_path, log_file_path):
                 print(f"Duplicate user account found: {username}")
             else:
                 existing_usernames.add(username)
+                # Generate a random password
+                password = generate_random_password()
                 # Create user account
-                create_user_account(username, f"{last_name} {first_name}", group)
+                create_user_account(username, f"{last_name} {first_name}", group, password)
 
     # Write user account details to CSV file
     with open(output_file_path, 'w', newline='') as output_file:
         writer = csv.writer(output_file)
-        writer.writerow(['First Name', 'Last Name', 'Username'])
+        writer.writerow(['First Name', 'Last Name', 'Username', 'Password'])
         for username in existing_usernames:
             full_name = subprocess.check_output(["grep", username, "/etc/passwd"], stderr=subprocess.DEVNULL).decode().split(":")[4]
             first_name, last_name = full_name.strip().split(' ', 1)
-            writer.writerow([first_name, last_name, username])
+            writer.writerow([first_name, last_name, username, "Generated Password"])
 
     # Write log messages to log file
     if log_file_path:
