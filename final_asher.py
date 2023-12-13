@@ -33,7 +33,10 @@ def get_files_to_monitor(ip_address, username, password):
 
 def display_files(files):
     # Implement code to display the contents of affected files
-    pass
+    for file_path in files:
+        with open(file_path, 'r') as file:
+            content = file.read()
+            print(f"Content of {file_path}:\n{content}\n{'=' * 40}")
 
 def send_email(recipient_email, sender_email, sender_password, files, affected_user):
     # Set up the email server
@@ -69,7 +72,9 @@ def send_email(recipient_email, sender_email, sender_password, files, affected_u
 
 def download_file(ssh, file_path, download_path=None):
     # Implement code to download the specified file to the specified directory
-    pass
+    sftp = ssh.open_sftp()
+    destination_path = os.path.join(download_path, os.path.basename(file_path)) if download_path else os.path.expanduser("~")
+    sftp.get(file_path, destination_path)
 
 def main():
     # Define command-line arguments
