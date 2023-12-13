@@ -37,27 +37,35 @@ def send_email(sender_email, sender_password, recipient_email, files_list, affec
     # Method to send an email with a list of affected files to the CTO
     subject = "Security Alert - Files Compromised"
     body = f"The following files in the home directory of user '{affected_user}' have been compromised:\n\n"
-    for file_path in files_list:
-        body += f"{file_path}\n"
-    
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = recipient_email
-    msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'plain'))
+
+    # Filter out non-existent files from the files_list
+    valid_files = [file_path for file_path in files_list if os.path.exists(file_path)]
+
+    if not valid_files:
+        print("No valid files found.")
+        return
 
     # Attach the smallest affected file
-    smallest_file = min(files_list, key=lambda x: os.path.getsize(x))
+    smallest_file = min(valid_files, key=lambda x: os.path.getsize(x) if os.path.exists(x) else float('inf'))
+
     with open(smallest_file, 'rb') as attachment:
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+
         part = MIMEApplication(attachment.read(), Name=os.path.basename(smallest_file))
         part['Content-Disposition'] = f'attachment; filename="{os.path.basename(smallest_file)}"'
         msg.attach(part)
 
-    # Send the email
-    with smtplib.SMTP('smtp.gmail.com', 587) as server:
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, recipient_email, msg.as_string())
+        # Send the email
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, recipient_email, msg.as_string())
+
+    print(f"Email sent to {recipient_email} with the smallest affected file attached: {smallest_file}")
 
 def download_file(ssh_client, file_path, download_path):
     # Method to download the smallest affected file to the specified download path
