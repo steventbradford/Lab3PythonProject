@@ -103,7 +103,7 @@ def main():
         display_files(files)
 
     # Send email to the CTO
-    send_email(args.email, "CTOCIT383@gmail.com", "YourAppPassword", files, args.USERNAME)
+    send_email(args.email, "CTOCIT383@gmail.com", "fbcm vnjs zfix yhtn", files, args.USERNAME)
 
     # Establish an SSH connection for file download
     with paramiko.SSHClient() as ssh:
