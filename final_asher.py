@@ -36,8 +36,36 @@ def display_files(files):
     pass
 
 def send_email(recipient_email, sender_email, sender_password, files, affected_user):
-    # Implement code to send an email to the CTO with the list of affected files
-    # Attach the smallest file to the email
+    # Set up the email server
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+
+    # Log in to the sender's email account
+    server.login(sender_email, sender_password)
+
+    # Compose the email
+    subject = f"File Monitoring Report for {affected_user}"
+    body = f"Dear CTO,\n\nThe following files in the home directory of {affected_user} have been identified as potentially compromised:\n\n"
+    body += "\n".join(files)
+
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = recipient_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    # Attach the smallest file
+    smallest_file = min(files, key=os.path.getsize)
+    with open(smallest_file, "rb") as attachment:
+        part = MIMEApplication(attachment.read(), Name=os.path.basename(smallest_file))
+        part['Content-Disposition'] = f'attachment; filename="{os.path.basename(smallest_file)}"'
+        msg.attach(part)
+
+    # Send the email
+    server.sendmail(sender_email, recipient_email, msg.as_string())
+
+    # Clean up
+    server.quit()
 
 def download_file(ssh, file_path, download_path=None):
     # Implement code to download the specified file to the specified directory
