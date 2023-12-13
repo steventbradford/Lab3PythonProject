@@ -2,64 +2,86 @@ import csv
 import os
 import subprocess
 import random
+import string
 import time
 import argparse
 
-def create_user_account(first_name, last_name, user_group, existing_usernames):
-    # Create username
-    base_username = (last_name + first_name[0]).lower()
-    username = base_username
-    suffix = 1
-    while username in existing_usernames:
-        username = base_username + str(suffix)
-        suffix += 1
+def generate_password(length=8):
+    """Generate a random password of the given length."""
+    characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(characters) for _ in range(length))
 
-    # Generate random password
-    password = ''.join(random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for _ in range(8))
+def create_user(username, full_name, password):
+    """Create a Linux user account."""
+    try:
+        subprocess.run(["sudo", "useradd", "-m", "-c", full_name, "-p", password, username], check=True)
+        print(f"User '{username}' created successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error creating user '{username}': {e}")
 
-    # Add user to group
-    subprocess.run(["useradd", "-c", f"{last_name} {first_name}", "-m", "-p", password, username])
+def add_user_to_group(username, group):
+    """Add a user to a Linux user group."""
+    try:
+        subprocess.run(["sudo", "usermod", "-aG", group, username], check=True)
+        print(f"User '{username}' added to group '{group}'.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error adding user '{username}' to group '{group}': {e}")
 
-    # Add user to the specified group
-    subprocess.run(["usermod", "-aG", user_group, username])
-
-    return {'First Name': first_name, 'Last Name': last_name, 'Username': username, 'Password': password}
-
-def main():
-    parser = argparse.ArgumentParser(description='Create user accounts based on employee details.')
-    parser.add_argument('E_FILE_PATH', help='The path to the employee file name (including the file name)')
-    parser.add_argument('OUTPUT_FILE_PATH', help='The path to name of the file to store the employee account details (include the file name)')
-    parser.add_argument('-l', '--log', metavar='Logfile_name', help='Append a message to the log file')
-
-    args = parser.parse_args()
-
-    # Log the execution if a log file is provided
-    if args.log:
-        log_file_path = args.log
-        with open(log_file_path, 'a') as log_file:
-            log_file.write(f"Program executed at {time.time_ns()}\n")
-
-    # Read existing usernames from /etc/passwd
-    existing_usernames = set()
-    with open('/etc/passwd', 'r') as passwd_file:
-        for line in passwd_file:
-            username = line.split(':')[0]
-            existing_usernames.add(username)
-
+def process_employee_file(employee_file_path, output_file_path, log_file_path=None):
+    """Process the employee file and create user accounts."""
+    # Create a dictionary to store username occurrences
+    username_occurrences = {}
+    
     # Read employee details from the CSV file
-    employee_accounts = []
-    with open(args.E_FILE_PATH, 'r') as employee_file:
-        reader = csv.DictReader(employee_file)
+    with open(employee_file_path, 'r') as file:
+        reader = csv.DictReader(file)
+        
+        # Process each employee record
         for row in reader:
-            user_details = create_user_account(row['first_name'], row['last_name'], row['user_group'], existing_usernames)
-            employee_accounts.append(user_details)
-
-    # Write employee account details to the output CSV file
-    with open(args.OUTPUT_FILE_PATH, 'w', newline='') as output_file:
-        fieldnames = ['First Name', 'Last Name', 'Username', 'Password']
-        writer = csv.DictWriter(output_file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(employee_accounts)
+            first_name = row['first_name']
+            last_name = row['last_name']
+            user_group = row['user_group']
+            
+            # Generate username
+            base_username = last_name.lower() + first_name.lower()[0]
+            username = base_username
+            occurrence = username_occurrences.get(base_username, 0)
+            
+            if occurrence > 0:
+                username += str(occurrence)
+            
+            username_occurrences[base_username] = occurrence + 1
+            
+            # Generate password
+            password = generate_password()
+            
+            # Create user account
+            create_user(username, f'"{last_name} {first_name}"', password)
+            
+            # Add user to group
+            add_user_to_group(username, user_group)
+    
+    # Write user details to CSV file
+    with open(output_file_path, 'w', newline='') as output_file:
+        writer = csv.writer(output_file)
+        writer.writerow(['First Name', 'Last Name', 'Username', 'Password'])
+        
+        for row in reader:
+            writer.writerow([row['first_name'], row['last_name'], username, password])
+    
+    # Log execution time if log file path is provided
+    if log_file_path:
+        with open(log_file_path, 'a') as log_file:
+            log_file.write(f"Script executed at: {time.time_ns()}\n")
 
 if __name__ == "__main__":
-    main()
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="Create user accounts for employees.")
+    parser.add_argument("E_FILE_PATH", help="Path to the employee file name (including the file name)")
+    parser.add_argument("OUTPUT_FILE_PATH", help="Path to the file to store employee account details (including the file name)")
+    parser.add_argument("-l", "--log", help="Logfile name")
+    
+    args = parser.parse_args()
+    
+    # Execute the script
+    process_employee_file(args.E_FILE_PATH, args.OUTPUT_FILE_PATH, args.log)
