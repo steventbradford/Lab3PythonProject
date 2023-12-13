@@ -4,6 +4,7 @@ import getpass
 import smtplib
 import paramiko
 import datetime
+import sys  # Add the sys module for system-related functions
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
@@ -12,7 +13,11 @@ def get_files_to_monitor(ip_address, username, password):
     # Establish an SSH connection to the target computer
     with paramiko.SSHClient() as ssh:
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ip_address, username=username, password=password)
+        try:
+            ssh.connect(ip_address, username=username, password=password)
+        except paramiko.SSHException as e:
+            print(f"Error: Unable to establish SSH connection. {e}")
+            sys.exit(1)
 
         # Get the home directory path
         stdin, stdout, stderr = ssh.exec_command('echo $HOME')
@@ -43,12 +48,16 @@ def send_email(recipient_email, sender_email, sender_password, files, affected_u
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
 
     # Log in to the sender's email account
-    server.login(sender_email, sender_password)
+    try:
+        server.login(sender_email, sender_password)
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"Error: Unable to authenticate. {e}")
+        sys.exit(1)
 
     # Compose the email
     subject = f"File Monitoring Report for {affected_user}"
     body = f"Dear CTO,\n\nThe following files in the home directory of {affected_user} have been identified as potentially compromised:\n\n"
-    body += "\n".join(files)
+    body += "\n".join(f"- {file}" for file in files)
 
     msg = MIMEMultipart()
     msg['From'] = sender_email
@@ -64,16 +73,21 @@ def send_email(recipient_email, sender_email, sender_password, files, affected_u
         msg.attach(part)
 
     # Send the email
-    server.sendmail(sender_email, recipient_email, msg.as_string())
-
-    # Clean up
-    server.quit()
+    try:
+        server.sendmail(sender_email, recipient_email, msg.as_string())
+    finally:
+        server.quit()
 
 def download_file(ssh, file_path, download_path=None):
     # Implement code to download the specified file to the specified directory
     sftp = ssh.open_sftp()
     destination_path = os.path.join(download_path, os.path.basename(file_path)) if download_path else os.path.expanduser("~")
-    sftp.get(file_path, destination_path)
+    try:
+        sftp.get(file_path, destination_path)
+    except Exception as e:
+        print(f"Error downloading file: {e}")
+    finally:
+        sftp.close()
 
 def main():
     # Define command-line arguments
@@ -83,12 +97,12 @@ def main():
     parser.add_argument("-d", "--disp", action="store_true", help="Display the contents of affected files")
     parser.add_argument("-e", "--email", required=True, help="Email address of the CTO")
     parser.add_argument("-p", "--path", help="Download path for affected files")
-    parser.add_argument("-H", "--help", action="store_true", help="Show help message")
+    parser.add_argument("-H", "--Help", action="store_true", help="Show help message")
 
     # Parse command-line arguments
     args = parser.parse_args()
 
-    if args.help:
+    if args.Help:
         parser.print_help()
         return
 
