@@ -1,11 +1,4 @@
-first_name,last_name,user_group
-Roy,Gordon,IT
-Craig,Marshall,HR
-Robin,Gonzalez,HR
-Christian,Marshall,FI
-Stephen,Smith,FI
-Craig,Marshall,MK
-Robert,Gonzalez,IT
-Seth,Smith,MK
-Peace,Joy,FI
-Frank,Thomas,MK
+first_name,last_name,user_group,email
+Seth,Adjei,SCA,adjeis1@nku.edu
+FTP,User,CSC,cit383.testmail@gmail.com
+FTPP,Users,DSC,sebklearning@gmail.com
