@@ -89,7 +89,7 @@ def piped_commands(command1, command2):
         result = subprocess.check_output(f"{command2} <<< '{output1}'", shell=True, text=True)
 
         # Get NKU username for file and directory naming
-        nku_username = "your_nku_username"  # Replace with your NKU username
+        nku_username = "bradfords3@nku.edu"  # Replace with your NKU username
 
         # Create a subdirectory with NKU username
         subdirectory = f"{nku_username}_output"
